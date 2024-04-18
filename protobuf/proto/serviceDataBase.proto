@@ -1,0 +1,72 @@
+syntax = "proto3";
+
+package services;
+
+option go_package = "arifm.serv.v1;serv1";
+
+service DataBaseService {
+    rpc GetUser (GetUserRequest) returns (GetUserResponse);
+    rpc SaveUser (SaveUserRequest) returns (SaveUserResponse);
+    rpc GetTask (GetTaskRequest) returns (GetTaskResponse);
+    rpc SaveTask (SaveTaskRequest) returns (SaveTaskResponse);
+    rpc GetAnswer (GetAnswerRequest) returns (GetAnswerResponse);
+    rpc SaveAnswer (SaveAnswerRequest) returns (SaveAnswerResponse);
+}
+
+message SaveAnswerRequest {
+    int64 task_id = 1;
+    int64 answer = 2;
+}
+
+message SaveAnswerResponse {
+    int64 id = 1;
+}
+
+message GetAnswerRequest {
+    int64 id = 1;
+    int64 task_id = 2;
+}
+
+message GetAnswerResponse {
+    int64 id = 1;
+    string answer = 2;
+}
+
+message SaveTaskRequest {
+    int64 id_user = 1;
+    string task = 2;
+}
+
+message SaveTaskResponse {
+    int64 id = 1;
+}
+
+message GetTaskRequest {
+    int64 id = 1;
+    int64 id_user = 2;
+}
+
+message GetTaskResponse {
+    string task = 1;    
+    string status = 2;
+}
+
+message SaveUserRequest {
+    string UserName = 1;
+    string password = 2;  
+}
+
+message SaveUserResponse {
+    int64 id = 1;
+}
+
+message GetUserRequest {
+    string user = 1;
+    int64 user_id = 2;
+}
+
+message GetUserResponse {
+    int64 id_user = 1;
+    string userName = 2;
+    string password = 3;
+}
