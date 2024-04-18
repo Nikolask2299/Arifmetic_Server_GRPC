@@ -1,0 +1,8 @@
+{
+    "server": "arifmetic",
+    "port": "8080",
+    "timeout": "10s",
+    "storage_path":"storage/storage.db",
+    "count_agent": 5,
+    "html_path": "html/site.html"
+}
