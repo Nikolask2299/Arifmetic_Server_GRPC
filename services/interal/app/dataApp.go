@@ -22,9 +22,12 @@ func NewDataApp(dateserv *serverdata.ServerData, port int) *DataApp {
 }
 
 func (app *DataApp) MustRun() {
+
 	if err := app.Run(); err != nil {
 		panic(err)
-	}	
+	} else {
+		fmt.Println("ServerData is running OK")
+	}
 }
 
 func (app *DataApp) Run() error {

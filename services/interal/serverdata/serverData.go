@@ -3,7 +3,7 @@ package serverdata
 import (
 	"context"
 	serv "protobuf/gen/go"
-	"services/service/data"
+	"services/interal/service/data"
 	"strconv"
 	"google.golang.org/grpc"
 )

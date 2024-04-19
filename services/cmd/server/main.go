@@ -38,6 +38,8 @@ func main() {
 	storage, err := sqlite.NewStorage(cfg.StoragePath)
 	if err != nil {
 		panic(err)
+	} else {
+		fmt.Println("DataBase ok")
 	}
 
 	servData := serverdata.NewServerData(storage, storage, storage)
@@ -46,6 +48,6 @@ func main() {
 
 	dataApp := app.NewDataApp(servData, port)
 
-	go dataApp.MustRun()
+	dataApp.MustRun()
 
 }

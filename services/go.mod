@@ -16,7 +16,7 @@ require (
 	github.com/golang-migrate/migrate/v4 v4.17.0
 	github.com/hashicorp/errwrap v1.1.0 // indirect
 	github.com/hashicorp/go-multierror v1.1.1 // indirect
-	github.com/mattn/go-sqlite3 v1.14.16 // indirect
+	github.com/mattn/go-sqlite3 v1.14.16
 	go.uber.org/atomic v1.7.0 // indirect
 	google.golang.org/grpc v1.63.2
 )
