@@ -10,11 +10,23 @@ import (
 	"google.golang.org/grpc/credentials/insecure"
 )
 
-func NewDataClientConnection(timeout time.Duration, port int) (context.Context, serv1.DataBaseServiceClient) {
+type DataClient struct {
+	timeout time.Duration
+	port string
+}
 
-	addr := fmt.Sprintf("localhost:%d", port)
+func NewDataClient(timeout time.Duration, port string) *DataClient {
+	return &DataClient{
+		timeout: timeout,
+		port: port,
+	}
+}
 
-	ctx, _ := context.WithTimeout(context.Background(), timeout)
+func (c *DataClient) NewDataClientConnection() (context.Context, serv1.DataBaseServiceClient) {
+
+	addr := fmt.Sprintf("localhost:%s", c.port)
+
+	ctx, _ := context.WithTimeout(context.Background(), c.timeout)
 
 	conn, err := grpc.DialContext(context.Background(), addr, grpc.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {

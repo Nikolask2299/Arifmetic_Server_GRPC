@@ -1,14 +1,19 @@
 package main
 
 import (
+	
 	"fmt"
 	"net/http"
+
 	"services/interal/app"
+	"services/interal/serverauth"
 	"services/interal/serverdata"
+	"services/interal/service/auth"
 	"services/interal/storage/sqlite"
 	"services/pkg/config"
-	"strconv"
+
 	"text/template"
+	"time"
 )
 
 type HTML struct {
@@ -43,11 +48,29 @@ func main() {
 	}
 
 	servData := serverdata.NewServerData(storage, storage, storage)
+	dataApp := app.NewDataApp(servData, cfg.PortData)
 
-	port, _ := strconv.Atoi(cfg.Port)
 
-	dataApp := app.NewDataApp(servData, port)
+	timeout, err := time.ParseDuration(cfg.Timeout)
+	if err != nil {
+		fmt.Println(err)
+		timeout = 10 * time.Second
+	}
 
-	dataApp.MustRun()
+	tockenTTL, err := time.ParseDuration(cfg.TockenTTL)
+	if err != nil {
+		fmt.Println(err)
+		tockenTTL = 5 * time.Minute
+	}
 
+	
+	
+	clientData := serverdata.NewDataClient(timeout, cfg.PortData)
+
+	auth := auth.NewAuth(*clientData, tockenTTL)
+	servAuth := serverauth.NewServerAuth(*auth)
+	authApp := app.NewAuthApp(servAuth, cfg.PortAuth)
+	
+	go authApp.MustRun()		
+	 dataApp.MustRun()
 }

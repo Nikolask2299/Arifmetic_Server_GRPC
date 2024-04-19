@@ -9,10 +9,10 @@ import (
 
 type DataApp struct {
 	gRPCServer *grpc.Server
-	port       int
+	port       string
 }
 
-func NewDataApp(dateserv *serverdata.ServerData, port int) *DataApp {
+func NewDataApp(dateserv *serverdata.ServerData, port string) *DataApp {
 	gRPCServer := grpc.NewServer()
 	serverdata.Register(gRPCServer, dateserv)
 	return &DataApp{
@@ -25,15 +25,14 @@ func (app *DataApp) MustRun() {
 
 	if err := app.Run(); err != nil {
 		panic(err)
-	} else {
-		fmt.Println("ServerData is running OK")
-	}
+	} 
+	
 }
 
 func (app *DataApp) Run() error {
 	host := "localhost"
 
-	addr := fmt.Sprintf("%s:%d", host, app.port)
+	addr := fmt.Sprintf("%s:%s", host, app.port)
 	
 	lis, err := net.Listen("tcp", addr)
 	if err != nil {

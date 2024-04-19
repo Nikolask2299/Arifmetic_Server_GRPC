@@ -9,8 +9,10 @@ import (
 
 type Config struct {
 	Server string  `json:"server" yaml:"server"`
-	Port string 	 	`json:"port" yaml:"port"`
+	PortData string 	 	`json:"portData" yaml:"portData"`
+	PortAuth string `json:"portAuth" yaml:"portAuth"`
 	Timeout string `json:"timeout" yaml:"timeout"`
+	TockenTTL string `json:"tockenTTL" yaml:"tockenTTL"` 
 	StoragePath string  `json:"storage_path" yaml:"storage_path"`
 	CountAgent int  	 	`json:"count_agent" yaml:"count_agent"`
 	HTMLpath string `json:"html_path" yaml:"html_path"`

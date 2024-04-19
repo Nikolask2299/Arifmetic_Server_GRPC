@@ -2,14 +2,14 @@ package serverauth
 
 import (
 	"context"
-	serv1 "protobuf/gen/go"
+	serv "protobuf/gen/go"
 	"services/interal/service/auth"
 
 	"google.golang.org/grpc"
 )
 
 type ServerAuth struct {
-	serv1.AuthorizationServiceServer
+	serv.AuthorizationServiceServer
 	auth auth.Auth
 }
 
@@ -18,15 +18,15 @@ func NewServerAuth(auth auth.Auth) *ServerAuth {
 }
 
 func Register(s *grpc.Server, sa *ServerAuth) {
-	serv1.RegisterAuthorizationServiceServer(s, sa)
+	serv.RegisterAuthorizationServiceServer(s, sa)
 }
 
 type AuthorizationServiceServer interface {
-	Login(context.Context, *serv1.LoginRequest) (*serv1.LoginResponse, error)
-	Register(context.Context, *serv1.RegisterRequest) (*serv1.RegisterResponse, error)	
+	Login(context.Context, *serv.LoginRequest) (*serv.LoginResponse, error)
+	Register(context.Context, *serv.RegisterRequest) (*serv.RegisterResponse, error)	
 }
 
-func (s *ServerAuth) Login(ctx context.Context, req *serv1.LoginRequest) (*serv1.LoginResponse, error) {
+func (s *ServerAuth) LoginUser(ctx context.Context, req *serv.LoginRequest) (*serv.LoginResponse, error) {
 	user := req.GetUserName()
 	pass := req.GetPassword()
 
@@ -35,12 +35,12 @@ func (s *ServerAuth) Login(ctx context.Context, req *serv1.LoginRequest) (*serv1
 		return nil, err
 	}
 
-	return &serv1.LoginResponse{
+	return &serv.LoginResponse{
 		Token: res,
 	}, nil			
 }
 
-func (s *ServerAuth) Register(ctx context.Context, req *serv1.RegisterRequest) (*serv1.RegisterResponse, error) {
+func (s *ServerAuth) RegisterUser(ctx context.Context, req *serv.RegisterRequest) (*serv.RegisterResponse, error) {
 	user := req.GetUserName()
 	pass := req.GetPassword()
 
@@ -49,7 +49,7 @@ func (s *ServerAuth) Register(ctx context.Context, req *serv1.RegisterRequest) (
 		return nil, err
 	}
 
-	return &serv1.RegisterResponse{
+	return &serv.RegisterResponse{
 		UserId: res,
 	}, nil
 }

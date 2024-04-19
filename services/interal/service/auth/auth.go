@@ -4,7 +4,8 @@ import (
 	"context"
 	serv1 "protobuf/gen/go"
 	"services/interal/model"
-	
+	"services/interal/serverdata"
+
 	"services/interal/tocken"
 	"time"
 
@@ -12,15 +13,13 @@ import (
 )
 
 type Auth struct {
-	ctx context.Context
-	dataclient serv1.DataBaseServiceClient
+	dataclient serverdata.DataClient
 	tokenTTL time.Duration
 }
 
 
-func NewAuth(ctx context.Context, client serv1.DataBaseServiceClient, tokenTTL time.Duration) *Auth {
+func NewAuth(client serverdata.DataClient, tokenTTL time.Duration) *Auth {
 	return &Auth{
-		ctx: ctx,
 		dataclient: client,
 		tokenTTL: tokenTTL,
 	}
@@ -28,11 +27,13 @@ func NewAuth(ctx context.Context, client serv1.DataBaseServiceClient, tokenTTL t
 
 func (a *Auth) Login(ctx context.Context, username, password string) (string, error) {
 	
-	resp, err := a.dataclient.GetUser(a.ctx, &serv1.GetUserRequest{
+	ctxt, connect := a.dataclient.NewDataClientConnection()
+
+	resp, err := connect.GetUser(ctxt, &serv1.GetUserRequest{
 		User: username,
 		UserId: 0,
 	})
-
+	
 	if err != nil {
 		return "", err
 	}
@@ -62,7 +63,9 @@ func (a *Auth) Register(ctx context.Context, username, password string) (int64, 
 		return 0, err
 	}
 
-	resp, err := a.dataclient.SaveUser(a.ctx, &serv1.SaveUserRequest{
+	ctxt, connect := a.dataclient.NewDataClientConnection()
+
+	resp, err := connect.SaveUser(ctxt, &serv1.SaveUserRequest{
 		UserName: username,
 		Password: string(passHash),
 	})

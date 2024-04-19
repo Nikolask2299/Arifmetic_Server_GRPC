@@ -11,11 +11,11 @@ import (
 
 type AuthApp struct {
 	gRPCServer *grpc.Server
-	port int
+	port string
 }
 
 
-func NewAuthApp(authserv *serverauth.ServerAuth, port int) *AuthApp {
+func NewAuthApp(authserv *serverauth.ServerAuth, port string) *AuthApp {
 	gRPCServer := grpc.NewServer()
 	serverauth.Register(gRPCServer, authserv)
 	return &AuthApp{
@@ -24,19 +24,17 @@ func NewAuthApp(authserv *serverauth.ServerAuth, port int) *AuthApp {
 	}
 }
 
-func (app *DataApp) MustRun() {
-
+func (app *AuthApp) MustRun() {
+	
 	if err := app.Run(); err != nil {
 		panic(err)
-	} else {
-		fmt.Println("ServerData is running OK")
-	}
+	} 
 }
 
-func (app *DataApp) Run() error {
+func (app *AuthApp) Run() error {
 	host := "localhost"
 
-	addr := fmt.Sprintf("%s:%d", host, app.port)
+	addr := fmt.Sprintf("%s:%s", host, app.port)
 	
 	lis, err := net.Listen("tcp", addr)
 	if err != nil {
@@ -46,10 +44,10 @@ func (app *DataApp) Run() error {
 	if err := app.gRPCServer.Serve(lis); err != nil {
 		return err
 	}
-	
+
 	return nil
 }
 
-func (app *DataApp) Stop() {
+func (app *AuthApp) Stop() {
 	app.gRPCServer.GracefulStop()
 }
