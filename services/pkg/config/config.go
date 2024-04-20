@@ -9,13 +9,15 @@ import (
 
 type Config struct {
 	Server string  `json:"server" yaml:"server"`
+	HttpPort string `json:"httpPort" yaml:"httpPort"`
 	PortData string 	 	`json:"portData" yaml:"portData"`
 	PortAuth string `json:"portAuth" yaml:"portAuth"`
 	Timeout string `json:"timeout" yaml:"timeout"`
 	TockenTTL string `json:"tockenTTL" yaml:"tockenTTL"` 
 	StoragePath string  `json:"storage_path" yaml:"storage_path"`
 	CountAgent int  	 	`json:"count_agent" yaml:"count_agent"`
-	HTMLpath string `json:"html_path" yaml:"html_path"`
+	PathMain string `json:"html_path_main" yaml:"html_path_main"`
+	PathAuth string `json:"html_path_auth" yaml:"html_path_auth`
 }
 
  func Mustload() *Config {

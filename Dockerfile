@@ -4,6 +4,6 @@ WORKDIR /arifm
 
 COPY . .
 
-RUN make
+RUN make 
 
 CMD [ "./arifm-server", "--config=./config_file/configuration.json"]

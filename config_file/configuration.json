@@ -1,10 +1,12 @@
 {
     "server": "arifmetic",
+    "httpPort": "8080",
     "portData": "8001",
     "portAuth": "8002",
     "timeout": "10s",
     "tockenTTL": "5m",
     "storage_path":"storage/storage.db",
     "count_agent": 5,
-    "html_path": "html/site.html"
+    "html_path_main": "html/site.html",
+    "html_path_auth": "html/auth.html"
 }

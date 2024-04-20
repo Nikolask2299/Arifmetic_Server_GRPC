@@ -2,8 +2,9 @@ package agent
 
 import (
 	"fmt"
-	"time"
+	"services/interal/model"
 	"services/pkg/arifm"
+	"time"
 )
 
 func NewCountDemon(count int, main *MainOrchestratorService) {
@@ -16,15 +17,15 @@ func Demon(main *MainOrchestratorService) {
 	for {
 		task := main.GetTask()
 		if task == nil {
-			time.Sleep(time.Second * 10)
+			time.Sleep(time.Second * 5)
 			continue
 		}
 
-		res, err := arifm.ArifmeticServer(task.task)
+		res, err := arifm.ArifmeticServer(task.Task)
 		if err != nil {
-			fmt.Println("Demon:", err , task.id, task.task)
+			fmt.Println("Demon:", err , task.Id, task.Task)
 		}
-		anwer := NewUserAnswer(*task, res)
+		answer := model.NewAnswer(task.Id, res)
 		main.AgentOut.PushAnswer(anwer)
 	}
 }
@@ -32,12 +33,11 @@ func Demon(main *MainOrchestratorService) {
 func (mainOrcServ *MainOrchestratorService) Output() {
 	for {
 		answ := mainOrcServ.AgentOut.GetAnswer()
-
 		if answ == nil {
-			time.Sleep(3 * time.Second)
+			time.Sleep(time.Second)
 			continue
 		}
 
-		mainOrcServ.database[answ.Id] = answ
+		
 	}	
 }

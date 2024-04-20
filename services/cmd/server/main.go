@@ -1,41 +1,21 @@
 package main
 
 import (
-	
 	"fmt"
 	"net/http"
 
 	"services/interal/app"
 	"services/interal/serverauth"
 	"services/interal/serverdata"
+	"services/interal/serverhttp"
 	"services/interal/service/auth"
 	"services/interal/storage/sqlite"
 	"services/pkg/config"
+	htmlpath "services/pkg/htmlPath"
 
-	"text/template"
 	"time"
 )
 
-type HTML struct {
-	path string
-}
-
-func (p *HTML)HandleHome(rw http.ResponseWriter, r *http.Request) {
-	
-	tmpl, err := template.ParseFiles(p.path)
-	if err != nil {
-		fmt.Println(err)
-		http.Error(rw, err.Error(), 400)
-		return
-	}
-
-	err = tmpl.Execute(rw, nil)
-	if err != nil {
-		fmt.Println(err)
-		http.Error(rw, err.Error(), 400)
-		return
-	}
-}
 
 func main() {
 	cfg := config.Mustload()
@@ -72,5 +52,20 @@ func main() {
 	authApp := app.NewAuthApp(servAuth, cfg.PortAuth)
 	
 	go authApp.MustRun()		
-	 dataApp.MustRun()
+	go dataApp.MustRun()
+
+
+
+	
+	html := htmlpath.NewHTML(cfg.PathAuth, cfg.PathMain)
+
+	clientAuth := serverauth.NewAuthClient(timeout, cfg.PortAuth)
+	
+	httpAuth := serverhttp.NewHTTPAuth(clientAuth, *html)
+
+	http.HandleFunc("/arifmetic/auth/v1", httpAuth.Autorisation)
+	http.HandleFunc("/arifmetic/auth", html.HandleAuth)
+	http.HandleFunc("/arifmetic", )
+
+	http.ListenAndServe("localhost:" + cfg.HttpPort, nil)
 }

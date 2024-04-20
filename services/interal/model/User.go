@@ -5,3 +5,5 @@ type User struct {
 	Name string
 	PassHash []byte
 }
+
+

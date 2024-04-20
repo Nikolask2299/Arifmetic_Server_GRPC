@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Autorisation Matematic Server</title>
+   <script>
+    function respRegister() {
+        var name = document.getElementById("name").value;
+        var password = document.getElementById("password").value;
+        var xhr = new XMLHttpRequest();
+
+        var data = JSON.stringify({
+            "name": name,
+            "password": password
+        });
+        
+        xhr.open("POST", "http://localhost:8080/arifmetic/auth/v1", true);
+        xhr.setRequestHeader("Content-Type", "application/json");
+        xhr.send(data);
+        xhr.onreadystatechange = function() {
+           document.body.innerHTML = xhr.responseText;
+        };
+    }
+   </script>
+
+    <script>
+        function respLogin() {
+            var name = document.getElementById("name").value;
+            var password = document.getElementById("password").value;
+            var xhr = new XMLHttpRequest();
+        
+            xhr.open("GET", "http://localhost:8080/arifmetic/auth/v1", true);
+            xhr.setRequestHeader("name", name);
+            xhr.setRequestHeader("password", password);
+            xhr.send(null);
+            xhr.onreadystatechange = function() {
+                var tocken = xhr.getResponseHeader("tocken");
+                sessionStorage.setItem("tocken", tocken);
+                document.body.innerHTML = xhr.responseText;
+            };
+        }
+    </script>
+</head>
+<body>
+    <h1 align="center">Авторизация</h1>
+    <p align="center">
+        <input id="name" type="Name" name="name" placeholder="Name" required><br>
+        <input id="password" type="password"name="password" placeholder="Password" required><br>
+        <button type="button" onclick="respLogin()">Login</button>
+        <button type="button" onclick="respRegister()">Register</button>
+    </p>
+</body>
+</html>
