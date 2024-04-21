@@ -1,84 +1,104 @@
 <!DOCTYPE html>
-<html>
-    <head>
-        <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Matematic Server</title>
-      <script>
-        function sendRequestID() {
-          var id = document.getElementById("request-id-input").value;
-          var xhr = new XMLHttpRequest();
-          xhr.open("GET", "http://localhost:8080/arifmetic", true);
-          var tocken = sessionStorage.getItem("tocken");
-          xhr.setRequestHeader("tocken", tocken);
-          xhr.onreadystatechange = function () {
-            if (xhr.status == 200) {
-              alert("Запрос отправлен");
-              var responsemass = JSON.parse(xhr.response);
-              var table = document.getElementById("table-id");
-              table.innerHTML = "<tr><th>ID</th><th>Выражение</th><th>Ответ</th><th>Статус</th></tr>";
-              for (var i = 0; i < responsemass.length; i++) {
-              var response = responsemass[i];
-              var newrow = table.insertRow(1);
-              newrow.insertCell(0).innerHTML = response.id;
-              newrow.insertCell(1).innerHTML = response.task;
-              newrow.insertCell(2).innerHTML = response.answer;
-              newrow.insertCell(3).innerHTML = response.status;
-              }
-            } else if (xhr.status == 304) {
-              alert("Срок действия токена авторизации истек. Пожалуйста, авторизуйтесь снова.");
-              document.body.innerHTML = xhr.responseText;
-            }
-          }
-        xhr.send(null);
-      }
-      </script>
+<head>
+	<meta charset="UTF-8">
+  	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+  	<title>Matematic Server</title>
+
+  	<script>
+    	function sendRequestID() {
+      		var id = document.getElementById("request-id-input").value;
+      		var xhr = new XMLHttpRequest();
+      		xhr.open("GET", "http://localhost:8080/arifmetic", true);
+      		var tocken = sessionStorage.getItem("tocken");
+      		xhr.setRequestHeader("tocken", tocken);
+
+      		xhr.onreadystatechange = function () {
+                if (xhr.readyState === XMLHttpRequest.DONE) {
+                    var response = xhr.responseText;
+                    var code = xhr.status;
+
+        		    if (code == 200) {
+          			    alert("Запрос отправлен");
+          			    var responsemass = JSON.parse(xhr.response);
+          			    var table = document.getElementById("table-id");
+          			    table.innerHTML = "<tr><th>ID</th><th>Выражение</th><th>Ответ</th><th>Статус</th></tr>";
+                    
+                        for (var i = 0; i < responsemass.length; i++) {
+                            var response = responsemass[i];
+                            var newrow = table.insertRow(1);
+                            newrow.insertCell(0).innerHTML = response.id;
+                            newrow.insertCell(1).innerHTML = response.task;
+                            newrow.insertCell(2).innerHTML = response.answer;
+                            newrow.insertCell(3).innerHTML = response.status;
+                        }
+                    } else if (xhr.status == 305) {
+                        var responseText = xhr.responseText;
+                        alert("Срок действия токена авторизации истек. Пожалуйста, авторизуйтесь снова.");
+                        sessionStorage.removeItem("tocken");
+                        window.location.href = responseText;
+                    }
+                }
+            };
+            xhr.send(null);
+        }
+    </script>
         
 
-      <script>
+    <script>
         function sendExpressions() {
-          var expressions = document.getElementById("expressions").value;
-          var expressionList = expressions.split(';').map(expression => expression.trim());
-          var data = expressionList;
-          var xhr = new XMLHttpRequest();
-          xhr.open("POST", "http://localhost:8080/arifmetic", true);
-          xhr.setRequestHeader("Content-Type", "application/json");
-          var tocken = sessionStorage.getItem("tocken");
-          xhr.setRequestHeader("tocken", tocken);
-          xhr.onreadystatechange = function () {
-            if (xhr.status == 200) {
-              alert("Выражения отправлены");
-            } else if (xhr.status == 304) {
-              alert("Срок действия токена авторизации истек. Пожалуйста, авторизуйтесь снова.");
-              document.body.innerHTML = xhr.responseText;
+            var expressions = document.getElementById("expressions").value;
+            var expressionList = expressions.split(';').map(expression => expression.trim());
+            var data = expressionList;
+            var xhr = new XMLHttpRequest();
+
+            xhr.open("POST", "http://localhost:8080/arifmetic", true);
+            xhr.setRequestHeader("Content-Type", "application/json");
+            var tocken = sessionStorage.getItem("tocken");
+            if (tocken) {
+                xhr.setRequestHeader("tocken", tocken);
+                xhr.send(JSON.stringify(data));
             }
-          };
-          xhr.send(JSON.stringify(data));
+
+            xhr.onreadystatechange = function () {
+                if (xhr.readyState === XMLHttpRequest.DONE) {
+                    var response = xhr.responseText;
+                    var code = xhr.status;
+
+                    if (code == 200) {
+                        alert("Выражения отправлены");
+                    } else if (code == 305) {
+                        alert("Срок действия токена авторизации истек. Пожалуйста, авторизуйтесь снова.");
+                        sessionStorage.removeItem("tocken");
+                        window.location.href = response;
+                    }
+                }
+            };
+            
         }
-      </script>
+    </script>
 
+</head>
 
-
-    </head>
-    <body>
-      <form>
+<body>
+    <form>
         <textarea id="expressions" name="expressions" placeholder="Введите выражения, разделяя их символом ;"></textarea>
         <button type="button" onclick="sendExpressions()">Отправить</button>
-      </form>
+    </form>
       
-      <form>
+    <form>
         <h3>Запрос</h3> 
         <button type="button" onclick="sendRequestID()">Отправить</button>
         <p></p>
-      </form>
+    </form>
       
-      <table class="table" id="table-id">
+    <table class="table" id="table-id">
         <tr>
-          <th>ID</th>
-          <th>Выражение</th>
-          <th>Ответ</th>
-          <th>Статус</th>
+            <th>ID</th>
+            <th>Выражение</th>
+            <th>Ответ</th>
+            <th>Статус</th>
         </tr>
-      </table>
-    </body>
+    </table>
+    
+</body>
 </html>

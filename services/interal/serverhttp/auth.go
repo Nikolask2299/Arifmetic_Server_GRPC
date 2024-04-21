@@ -2,6 +2,7 @@ package serverhttp
 
 import (
 	"encoding/json"
+	"fmt"
 
 	"io"
 	"net/http"
@@ -58,7 +59,7 @@ func (a *HTTPAuth) Autorisation(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 		
-		a.html.HandleAuth(w, r)
+		fmt.Fprintln(w, "/arifmetic/auth")
 		return
 	}
 
@@ -77,8 +78,8 @@ func (a *HTTPAuth) Autorisation(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		w.Header().Add("token", res.GetToken())
-		a.html.HandleHome(w, r)
+		w.Header().Add("tocken", res.GetToken())
+		fmt.Fprint(w, "/arifmetic/home")
 		return
 	}
 

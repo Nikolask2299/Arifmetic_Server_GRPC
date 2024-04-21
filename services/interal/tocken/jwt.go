@@ -2,6 +2,7 @@ package tocken
 
 import (
 	"errors"
+	"fmt"
 	"services/interal/model"
 	"time"
 
@@ -14,7 +15,7 @@ func NewTocken(user model.User, secret string, duration time.Duration) (string, 
 
 	claims["id"] = user.ID
 	claims["name"] = user.Name
-	claims["nbf"] = time.Now().Add(time.Second * 1).Unix()
+	claims["nbf"] = time.Now().Add(time.Second).Unix()
 	claims["exp"] = time.Now().Add(duration).Unix()
 	claims["iat"] = time.Now().Unix()
 
@@ -28,28 +29,24 @@ func NewTocken(user model.User, secret string, duration time.Duration) (string, 
 
 func ParseTocken(tockenString string, secret string) (int64, error) {
 	tockenParsed, err := jwt.Parse(tockenString, func(token *jwt.Token) (interface{}, error) {
+		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
+			panic(fmt.Errorf("unexpected signing method: %v", token.Header["alg"]))
+		}
+		
 		return []byte(secret), nil
 	})
+
 	if err != nil {
 		return 0, err
 	}
 
-	claims, ok := tockenParsed.Claims.(jwt.MapClaims)
-	if !ok {
-		return 0, errors.New("could not parse claims")
-	}
+	var id float64
 
-	currTime := time.Now().Unix()
+	if claims, ok := tockenParsed.Claims.(jwt.MapClaims); ok {
+		id = claims["id"].(float64)
+	} else {
+		return 0, errors.New("invalid tocken")
+	} 
 
-	if claims["nbf"].(int64) > currTime {
-		return 0, errors.New("token has expired")
-	}	
-	
-	if claims["exp"].(int64) > currTime {
-		return 0, errors.New("token has expired")
-	}
-
-	id := claims["id"].(int64)
-
-	return id, nil
+	return int64(id), nil
 }

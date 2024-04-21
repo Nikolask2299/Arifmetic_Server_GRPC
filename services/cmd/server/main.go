@@ -71,6 +71,7 @@ func main() {
 	http.HandleFunc("/arifmetic/auth/v1", httpAuth.Autorisation)
 	http.HandleFunc("/arifmetic/auth", html.HandleAuth)
 	http.HandleFunc("/arifmetic", httpArifm.ArifmeticServer)
+	http.HandleFunc("/arifmetic/home", html.HandleHome)
 
 	http.ListenAndServe("localhost:" + cfg.HttpPort, nil)
 }

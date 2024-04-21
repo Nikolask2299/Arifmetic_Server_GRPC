@@ -3,8 +3,8 @@ package serverhttp
 import (
 	"fmt"
 	"net/http"
+	serv1 "protobuf/gen/go"
 
-	"services/interal/model"
 	"services/interal/serverdata"
 	"services/interal/tocken"
 	htmlpath "services/pkg/htmlPath"
@@ -27,24 +27,25 @@ func NewHTTPArifmetic(dataclient serverdata.DataClient, html htmlpath.HTML) *HTT
 
 func (h *HTTPArifmetic) ArifmeticServer(w http.ResponseWriter, r *http.Request) {
 	if r.Method == http.MethodPost {
+		
 		userid, err := tocken.ParseTocken(r.Header.Get("tocken"), "secret-user")
 		if err != nil {
-			w.WriteHeader(304)
-			h.html.HandleAuth(w, r)
+			w.WriteHeader(305)
+			fmt.Fprintln(w, "/arifmetic/auth")
 			return			
 		}
 
 		task, err := serial.SerialTaskJSON(r)
 		if err != nil {
-			w.WriteHeader(304)
-			h.html.HandleAuth(w, r)
+			w.WriteHeader(305)
+			fmt.Fprintln(w, "/arifmetic/auth")
 			return
 		}
 
-		err = model.SerialTask(userid, task, h.dataclient)
+		err = SerialTask(userid, task, h.dataclient)
 		if err != nil {
-			w.WriteHeader(304)
-			h.html.HandleAuth(w, r)
+			w.WriteHeader(305)
+			fmt.Fprintln(w, "/arifmetic/auth")
 			return
 		}
 
@@ -61,7 +62,21 @@ func (h *HTTPArifmetic) ArifmeticServer(w http.ResponseWriter, r *http.Request) 
 }
 
 
+func SerialTask(userID int64, tasks []string, dataClient serverdata.DataClient) error {
+	ctxt, conn := dataClient.NewDataClientConnection()
+	for _, task := range tasks {
+		_, err := conn.SaveTask(ctxt, &serv1.SaveTaskRequest{
+			IdUser: userID,
+			Task: task,
+		})
 
+		if err != nil {
+			return err
+		}
+
+	}
+	return nil
+}
 
 
 

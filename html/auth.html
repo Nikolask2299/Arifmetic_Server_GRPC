@@ -3,6 +3,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Autorisation Matematic Server</title>
+    
    <script>
     function respRegister() {
         var name = document.getElementById("name").value;
@@ -18,7 +19,7 @@
         xhr.setRequestHeader("Content-Type", "application/json");
         xhr.send(data);
         xhr.onreadystatechange = function() {
-           document.body.innerHTML = xhr.responseText;
+           window.location.href = xhr.responseText;
         };
     }
    </script>
@@ -34,9 +35,14 @@
             xhr.setRequestHeader("password", password);
             xhr.send(null);
             xhr.onreadystatechange = function() {
-                var tocken = xhr.getResponseHeader("tocken");
-                sessionStorage.setItem("tocken", tocken);
-                document.body.innerHTML = xhr.responseText;
+                if (xhr.readyState == 4 && xhr.status == 200) {
+                    var tocken = xhr.getResponseHeader("tocken");
+                    sessionStorage.setItem("tocken", tocken);
+                    console.log(tocken);
+                    if (tocken){
+                    window.location.href = xhr.responseText; 
+                    }
+                }
             };
         }
     </script>
