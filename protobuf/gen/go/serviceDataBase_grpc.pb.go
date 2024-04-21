@@ -25,6 +25,8 @@ const (
 	DataBaseService_SaveTask_FullMethodName   = "/services.DataBaseService/SaveTask"
 	DataBaseService_GetAnswer_FullMethodName  = "/services.DataBaseService/GetAnswer"
 	DataBaseService_SaveAnswer_FullMethodName = "/services.DataBaseService/SaveAnswer"
+	DataBaseService_UpdateTask_FullMethodName = "/services.DataBaseService/UpdateTask"
+	DataBaseService_WorkTask_FullMethodName   = "/services.DataBaseService/WorkTask"
 )
 
 // DataBaseServiceClient is the client API for DataBaseService service.
@@ -37,6 +39,8 @@ type DataBaseServiceClient interface {
 	SaveTask(ctx context.Context, in *SaveTaskRequest, opts ...grpc.CallOption) (*SaveTaskResponse, error)
 	GetAnswer(ctx context.Context, in *GetAnswerRequest, opts ...grpc.CallOption) (*GetAnswerResponse, error)
 	SaveAnswer(ctx context.Context, in *SaveAnswerRequest, opts ...grpc.CallOption) (*SaveAnswerResponse, error)
+	UpdateTask(ctx context.Context, in *UpdateTaskRequest, opts ...grpc.CallOption) (*UpdateTaskResponse, error)
+	WorkTask(ctx context.Context, in *WorkRequest, opts ...grpc.CallOption) (*WorkResponse, error)
 }
 
 type dataBaseServiceClient struct {
@@ -101,6 +105,24 @@ func (c *dataBaseServiceClient) SaveAnswer(ctx context.Context, in *SaveAnswerRe
 	return out, nil
 }
 
+func (c *dataBaseServiceClient) UpdateTask(ctx context.Context, in *UpdateTaskRequest, opts ...grpc.CallOption) (*UpdateTaskResponse, error) {
+	out := new(UpdateTaskResponse)
+	err := c.cc.Invoke(ctx, DataBaseService_UpdateTask_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *dataBaseServiceClient) WorkTask(ctx context.Context, in *WorkRequest, opts ...grpc.CallOption) (*WorkResponse, error) {
+	out := new(WorkResponse)
+	err := c.cc.Invoke(ctx, DataBaseService_WorkTask_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // DataBaseServiceServer is the server API for DataBaseService service.
 // All implementations must embed UnimplementedDataBaseServiceServer
 // for forward compatibility
@@ -111,6 +133,8 @@ type DataBaseServiceServer interface {
 	SaveTask(context.Context, *SaveTaskRequest) (*SaveTaskResponse, error)
 	GetAnswer(context.Context, *GetAnswerRequest) (*GetAnswerResponse, error)
 	SaveAnswer(context.Context, *SaveAnswerRequest) (*SaveAnswerResponse, error)
+	UpdateTask(context.Context, *UpdateTaskRequest) (*UpdateTaskResponse, error)
+	WorkTask(context.Context, *WorkRequest) (*WorkResponse, error)
 	mustEmbedUnimplementedDataBaseServiceServer()
 }
 
@@ -135,6 +159,12 @@ func (UnimplementedDataBaseServiceServer) GetAnswer(context.Context, *GetAnswerR
 }
 func (UnimplementedDataBaseServiceServer) SaveAnswer(context.Context, *SaveAnswerRequest) (*SaveAnswerResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method SaveAnswer not implemented")
+}
+func (UnimplementedDataBaseServiceServer) UpdateTask(context.Context, *UpdateTaskRequest) (*UpdateTaskResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UpdateTask not implemented")
+}
+func (UnimplementedDataBaseServiceServer) WorkTask(context.Context, *WorkRequest) (*WorkResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method WorkTask not implemented")
 }
 func (UnimplementedDataBaseServiceServer) mustEmbedUnimplementedDataBaseServiceServer() {}
 
@@ -257,6 +287,42 @@ func _DataBaseService_SaveAnswer_Handler(srv interface{}, ctx context.Context, d
 	return interceptor(ctx, in, info, handler)
 }
 
+func _DataBaseService_UpdateTask_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UpdateTaskRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(DataBaseServiceServer).UpdateTask(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: DataBaseService_UpdateTask_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(DataBaseServiceServer).UpdateTask(ctx, req.(*UpdateTaskRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _DataBaseService_WorkTask_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(WorkRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(DataBaseServiceServer).WorkTask(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: DataBaseService_WorkTask_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(DataBaseServiceServer).WorkTask(ctx, req.(*WorkRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // DataBaseService_ServiceDesc is the grpc.ServiceDesc for DataBaseService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -287,6 +353,14 @@ var DataBaseService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "SaveAnswer",
 			Handler:    _DataBaseService_SaveAnswer_Handler,
+		},
+		{
+			MethodName: "UpdateTask",
+			Handler:    _DataBaseService_UpdateTask_Handler,
+		},
+		{
+			MethodName: "WorkTask",
+			Handler:    _DataBaseService_WorkTask_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

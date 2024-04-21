@@ -12,7 +12,7 @@ type AgentServiceOutput struct {
 	mux              sync.Mutex
 }
 
-func NewAgentServiceOutput(timeout time.Duration) *AgentServiceOutput {
+func NewAgentServiceOutput() *AgentServiceOutput {
 	return &AgentServiceOutput{
 		ChanOutputAnswer: make(chan *model.Answer, 10),
 		mux: sync.Mutex{},
@@ -26,7 +26,7 @@ func(a *AgentServiceOutput) GetAnswer() *model.Answer {
 		case ans := <- a.ChanOutputAnswer:
 			return ans
 		case <-time.After(time.Second):
-			return errors.New("AgentService is unavailable for get")
+			return nil
 	}
 }
 

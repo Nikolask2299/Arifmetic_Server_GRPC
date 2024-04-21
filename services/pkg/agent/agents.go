@@ -7,15 +7,15 @@ import (
 	"time"
 )
 
-func NewCountDemon(count int, main *MainOrchestratorService) {
+func NewCountDemon(count int, inp *AgentServiceInput, out *AgentServiceOutput) {
 	for i := 0; i < count; i++ {
-		go Demon(main)
+		go Demon(inp, out)
 	}
 }
 
-func Demon(main *MainOrchestratorService) {
+func Demon(inp *AgentServiceInput, out *AgentServiceOutput) {
 	for {
-		task := main.GetTask()
+		task := inp.GetTask()
 		if task == nil {
 			time.Sleep(time.Second * 5)
 			continue
@@ -26,18 +26,6 @@ func Demon(main *MainOrchestratorService) {
 			fmt.Println("Demon:", err , task.Id, task.Task)
 		}
 		answer := model.NewAnswer(task.Id, res)
-		main.AgentOut.PushAnswer(anwer)
+		out.PushAnswer(answer)
 	}
-}
-
-func (mainOrcServ *MainOrchestratorService) Output() {
-	for {
-		answ := mainOrcServ.AgentOut.GetAnswer()
-		if answ == nil {
-			time.Sleep(time.Second)
-			continue
-		}
-
-		
-	}	
 }

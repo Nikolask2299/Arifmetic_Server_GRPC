@@ -50,7 +50,7 @@ func TestDatabase(t *testing.T) {
 		t.Fatal("wrong id")
 	}
 
-	task, err := db.GetUserTask(ctx, idtsk)
+	task, err := db.GetTask(ctx, idtsk)
 	if err != nil {
 		t.Fatal(err)
 	}

@@ -4,41 +4,10 @@ package services;
 
 option go_package = "arifm.serv.v1;serv1";
 
-service ArifmeticService {
-    rpc GetStatServer (StatRequest) returns (StatResponse);
-    rpc WorkTask (TaskRequest) returns (TaskResponse);
-    rpc AnswerTask (AnswerRequest) returns (AnswerResponse);
-}
 
 service AuthorizationService {
     rpc LoginUser (LoginRequest) returns (LoginResponse);
     rpc RegisterUser (RegisterRequest) returns (RegisterResponse);   
-}
-
-message AnswerRequest {
-    int64 id_answ = 1;
-    int64 answer = 2;    
-}
-
-message AnswerResponse {
-    bool st = 1;
-}
-
-message TaskRequest {
-    int64 id_task = 1;
-    string task = 2;
-}
-
-message TaskResponse {
-    bool st = 1;
-}
-
-message StatRequest {
-    bool quest = 1;
-}
-
-message StatResponse {
-    string stat = 1;
 }
 
 message LoginRequest {

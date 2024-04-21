@@ -12,27 +12,27 @@ type AgentServiceInput struct {
 	mux sync.Mutex
 }
 
-func NewAgentServiceInput(timeout time.Duration) *AgentServiceInput {
+func NewAgentServiceInput() *AgentServiceInput {
 	return &AgentServiceInput{ChanInputTask: make(chan *model.Task, 10), 
 		mux: sync.Mutex{}}
 }
 
-func (a *MainOrchestratorService) GetTask() *model.Task {
-	a.AgentInp.mux.Lock()
-	defer a.AgentInp.mux.Unlock()
+func (a *AgentServiceInput) GetTask() *model.Task {
+	a.mux.Lock()
+	defer a.mux.Unlock()
 	select {
-		case tsk := <- a.AgentInp.ChanInputTask:
+		case tsk := <- a.ChanInputTask:
 			return tsk
 		case <-time.After(time.Second):			
-			return errors.New("timeout")
+			return nil
 	}
 }
 
-func (a *MainOrchestratorService) Push(task *model.Task) error {
-	a.AgentInp.mux.Lock()
-	defer a.AgentInp.mux.Unlock()
+func (a *AgentServiceInput) Push(task *model.Task) error {
+	a.mux.Lock()
+	defer a.mux.Unlock()
 	select {
-		case a.AgentInp.ChanInputTask <- task:
+		case a.ChanInputTask <- task:
 			return nil
 		case <-time.After(time.Second):			
 			return errors.New("timeout")

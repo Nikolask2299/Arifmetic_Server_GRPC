@@ -12,7 +12,9 @@ type DataUser interface {
 
 type DataTask interface {
 	SaveUserTask(ctx context.Context, user_id int64, task string, status string) (int64, error)
-	GetUserTask(ctx context.Context, id int64) (model.Task, error)	
+	GetTask(ctx context.Context, id int64) (model.Task, error)	
+	UpdateUserTask(ctx context.Context, id int64, status string) (int64, error)
+	WorkTask(ctx context.Context) (model.Task, error)
 }
 
 type DataAnswer interface {

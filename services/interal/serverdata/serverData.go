@@ -4,7 +4,9 @@ import (
 	"context"
 	serv "protobuf/gen/go"
 	"services/interal/service/data"
+
 	"strconv"
+
 	"google.golang.org/grpc"
 )
 
@@ -34,6 +36,8 @@ type DataBaseServiceServer interface {
 	SaveTask(context.Context, *serv.SaveTaskRequest) (*serv.SaveTaskResponse, error)
 	GetAnswer(context.Context, *serv.GetAnswerRequest) (*serv.GetAnswerResponse, error)
 	SaveAnswer(context.Context, *serv.SaveAnswerRequest) (*serv.SaveAnswerResponse, error)
+	UpdateTask(context.Context, *serv.UpdateTaskRequest) (*serv.UpdateTaskResponse, error)
+	WorkTask(context.Context, *serv.WorkRequest) (*serv.WorkResponse, error)
 	mustEmbedUnimplementedDataBaseServiceServer()
 }
 
@@ -54,7 +58,7 @@ func (s *ServerData) SaveUser(ctx context.Context, req *serv.SaveUserRequest) (*
 }
 
 func (s *ServerData) GetTask(ctx context.Context, req *serv.GetTaskRequest) (*serv.GetTaskResponse, error) {
-	res, err := s.taskData.GetUserTask(ctx, req.GetId())
+	res, err := s.taskData.GetTask(ctx, req.GetId())
 	if err != nil {
 		return nil, err
 	}
@@ -62,7 +66,7 @@ func (s *ServerData) GetTask(ctx context.Context, req *serv.GetTaskRequest) (*se
 }
 
 func (s *ServerData) SaveTask(ctx context.Context, req *serv.SaveTaskRequest) (*serv.SaveTaskResponse, error) {
-	res, err := s.taskData.SaveUserTask(ctx, req.IdUser, req.GetTask(), "WAITING")
+	res, err := s.taskData.SaveUserTask(ctx, req.GetIdUser(), req.GetTask(), "WAITING")
 	if err != nil {
 		return nil, err
 	}
@@ -86,4 +90,23 @@ func (s *ServerData) SaveAnswer(ctx context.Context, req *serv.SaveAnswerRequest
 	return &serv.SaveAnswerResponse{Id: res}, nil
 }
 
+func (s *ServerData) UpdateTask(ctx context.Context, req *serv.UpdateTaskRequest) (*serv.UpdateTaskResponse, error) {
+	res, err := s.taskData.UpdateUserTask(ctx, req.GetId(), req.GetStat())
+	if err != nil {
+		return nil, err
+	}
+	return &serv.UpdateTaskResponse{Id: res}, nil
+}
 
+func (s *ServerData) WorkTask(ctx context.Context, req *serv.WorkRequest) (*serv.WorkResponse, error) {
+	res, err := s.taskData.WorkTask(ctx)
+	if err != nil {
+		return nil, err
+	}
+	return &serv.WorkResponse{
+		Id: res.Id,
+		UserId: int64(res.User_id),
+		Task: res.Task,
+		Stat: res.Status,
+	}, nil
+}

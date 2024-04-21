@@ -9,7 +9,8 @@
           var id = document.getElementById("request-id-input").value;
           var xhr = new XMLHttpRequest();
           xhr.open("GET", "http://localhost:8080/arifmetic", true);
-          xhr.setRequestHeader("id", id);
+          var tocken = sessionStorage.getItem("tocken");
+          xhr.setRequestHeader("tocken", tocken);
           xhr.onreadystatechange = function () {
             if (xhr.status == 200) {
               alert("Запрос отправлен");

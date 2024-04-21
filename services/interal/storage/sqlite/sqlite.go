@@ -96,7 +96,7 @@ func (s *Storage) SaveUserAnswer(ctx context.Context, task_id int64, answer int)
 	return id, nil
 }
 
-func (s *Storage) GetUserTask(ctx context.Context, id int64) (model.Task, error) {
+func (s *Storage) GetTask(ctx context.Context, id int64) (model.Task, error) {
 	var result model.Task
 	var quest = "SELECT id, user_id, task, stat FROM task WHERE id = $1"
 	
@@ -130,3 +130,39 @@ func (s *Storage) GetUserAnswer(ctx context.Context, id int64, task_id int64) (m
 
 	return result, nil
 }
+
+func (s *Storage) UpdateUserTask(ctx context.Context, id int64, status string) (int64, error) {
+	var quest = "UPDATE task SET stat = $1 WHERE id = $2"
+	
+	res, err := s.db.ExecContext(ctx, quest, status, id)
+	if err != nil {
+		return 0, err
+	}
+
+	id, err = res.RowsAffected()
+	if err != nil {
+		return 0, err
+	}
+
+	return id, nil
+}
+
+func (s *Storage) WorkTask(ctx context.Context) (model.Task, error) {
+	var quest1 = "SELECT id, user_id, task, stat FROM task WHERE stat = $1"
+	var quest2 = "UPDATE task SET stat = $1 WHERE id = $2"
+	var retur model.Task
+
+	res := s.db.QueryRowContext(ctx, quest1, "WAITING")
+	err := res.Scan(&retur.Id, &retur.User_id, &retur.Task, &retur.Status)
+	if err != nil {
+		return model.Task{}, err
+	}
+
+	_, err = s.db.ExecContext(ctx, quest2, "WORKING", retur.Id)
+	if err != nil {
+		return model.Task{}, err
+	}
+
+	return retur, nil
+}
+
