@@ -21,7 +21,7 @@ go run services/cmd/server/main.go --config=config_file/configuration.json
 1 + 2;\
 4 * 3;\
 6 - (8 + 2);\
-89 / 8;\
+89 / 8;\ 
 678 + 877; \ 
 - 8877 / 88;
 - 7 * 65;
