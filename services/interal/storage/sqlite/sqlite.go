@@ -80,8 +80,10 @@ func (s *Storage) SaveUserTask(ctx context.Context, user_id int64, task string, 
 	return id, nil
 }
 
-func (s *Storage) SaveUserAnswer(ctx context.Context, task_id int64, answer int) (id int64, err error) {
+func (s *Storage) SaveUserAnswer(ctx context.Context, task_id int64, answer string) (id int64, err error) {
 	var quest = "INSERT INTO answer (task_id, answer) VALUES ($1, $2)"
+
+	
 
 	result, err := s.db.ExecContext(ctx, quest, task_id, answer)
 	if err != nil {
@@ -145,6 +147,27 @@ func (s *Storage) UpdateUserTask(ctx context.Context, id int64, status string) (
 	}
 
 	return id, nil
+}
+
+func (s *Storage) GetUserTasks(ctx context.Context, user_id int64) ([]model.Task, error) {
+	var result []model.Task
+	var quest = "SELECT id, user_id, task, stat FROM task WHERE user_id = $1"
+	
+	rows, err := s.db.QueryContext(ctx, quest, user_id)
+	if err != nil {
+		return nil, err
+	}
+	
+	for rows.Next() {
+		var task model.Task
+		err = rows.Scan(&task.Id, &task.User_id, &task.Task, &task.Status)
+		if err != nil {
+			return nil, err
+		}
+		result = append(result, task)
+	}
+	
+	return result, nil
 }
 
 func (s *Storage) WorkTask(ctx context.Context) (model.Task, error) {

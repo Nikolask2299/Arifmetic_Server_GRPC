@@ -13,6 +13,21 @@ service DataBaseService {
     rpc SaveAnswer (SaveAnswerRequest) returns (SaveAnswerResponse);
     rpc UpdateTask (UpdateTaskRequest) returns (UpdateTaskResponse);
     rpc WorkTask (WorkRequest) returns (WorkResponse);
+    rpc GetUserTasks (UserTaskRequest) returns (UserTaskResponse);
+}
+
+message Task {
+    int64 id = 1;
+    string task = 2;
+    string stat = 3;
+}
+
+message UserTaskRequest {
+    int64 id_user = 1;
+}
+
+message UserTaskResponse {
+    repeated Task taskmas = 1;
 }
 
 message WorkRequest {
@@ -37,7 +52,7 @@ message UpdateTaskResponse {
 
 message SaveAnswerRequest {
     int64 task_id = 1;
-    int64 answer = 2;
+    string answer = 2;
 }
 
 message SaveAnswerResponse {

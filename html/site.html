@@ -6,11 +6,13 @@
 
   	<script>
     	function sendRequestID() {
-      		var id = document.getElementById("request-id-input").value;
       		var xhr = new XMLHttpRequest();
       		xhr.open("GET", "http://localhost:8080/arifmetic", true);
       		var tocken = sessionStorage.getItem("tocken");
-      		xhr.setRequestHeader("tocken", tocken);
+            if (tocken) {
+                xhr.setRequestHeader("tocken", tocken);
+                xhr.send(null)
+            }
 
       		xhr.onreadystatechange = function () {
                 if (xhr.readyState === XMLHttpRequest.DONE) {
@@ -19,7 +21,7 @@
 
         		    if (code == 200) {
           			    alert("Запрос отправлен");
-          			    var responsemass = JSON.parse(xhr.response);
+          			    var responsemass = JSON.parse(response);
           			    var table = document.getElementById("table-id");
           			    table.innerHTML = "<tr><th>ID</th><th>Выражение</th><th>Ответ</th><th>Статус</th></tr>";
                     
@@ -31,7 +33,7 @@
                             newrow.insertCell(2).innerHTML = response.answer;
                             newrow.insertCell(3).innerHTML = response.status;
                         }
-                    } else if (xhr.status == 305) {
+                    } else if (code == 305) {
                         var responseText = xhr.responseText;
                         alert("Срок действия токена авторизации истек. Пожалуйста, авторизуйтесь снова.");
                         sessionStorage.removeItem("tocken");
@@ -39,7 +41,7 @@
                     }
                 }
             };
-            xhr.send(null);
+            
         }
     </script>
         

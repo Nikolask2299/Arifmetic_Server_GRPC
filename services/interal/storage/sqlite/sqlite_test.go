@@ -59,7 +59,7 @@ func TestDatabase(t *testing.T) {
 		t.Fatal("wrong name")
 	}
 
-	idans, err := db.SaveUserAnswer(ctx, idtsk, 4)
+	idans, err := db.SaveUserAnswer(ctx, idtsk, "4")
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -73,7 +73,7 @@ func TestDatabase(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	if answer.Answer != 4 {
+	if answer.Answer != "4" {
 		t.Fatal("wrong answer")
 	}
 
@@ -82,7 +82,7 @@ func TestDatabase(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	if answer.Answer != 4 {
+	if answer.Answer != "4" {
 		t.Fatal("wrong answer")
 	}
 }

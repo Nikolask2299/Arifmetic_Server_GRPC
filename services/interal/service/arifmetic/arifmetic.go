@@ -33,15 +33,21 @@ func AgentOutService(a *Arifmetic, dtclient serverdata.DataClient) {
 		ctxt, conn := dtclient.NewDataClientConnection()
 		_, err := conn.SaveAnswer(ctxt, &serv1.SaveAnswerRequest{
 			TaskId: input.Task_id,
-			Answer: int64(input.Answer),
+			Answer: input.Answer,
 		})
 		if err != nil {
 			fmt.Println("AgentOut ",err)
 		}
 
+		stats := "OK"
+
+		if input.Answer == "NONE" {
+			stats = "UNCORRECT"
+		}
+
 		_, err = conn.UpdateTask(ctxt, &serv1.UpdateTaskRequest{
 			Id: input.Task_id,
-			Stat: "OK",
+			Stat: stats,
 		})
 
 		if err != nil {
@@ -62,7 +68,7 @@ func AgentIntService(a *Arifmetic, dtclient serverdata.DataClient) {
 		})
 
 		if err != nil {
-			fmt.Println("AgentInt ",err)
+			//fmt.Println("AgentInt ",err)
 			time.Sleep(time.Second)
 			continue
 		}

@@ -19,14 +19,15 @@ import (
 const _ = grpc.SupportPackageIsVersion7
 
 const (
-	DataBaseService_GetUser_FullMethodName    = "/services.DataBaseService/GetUser"
-	DataBaseService_SaveUser_FullMethodName   = "/services.DataBaseService/SaveUser"
-	DataBaseService_GetTask_FullMethodName    = "/services.DataBaseService/GetTask"
-	DataBaseService_SaveTask_FullMethodName   = "/services.DataBaseService/SaveTask"
-	DataBaseService_GetAnswer_FullMethodName  = "/services.DataBaseService/GetAnswer"
-	DataBaseService_SaveAnswer_FullMethodName = "/services.DataBaseService/SaveAnswer"
-	DataBaseService_UpdateTask_FullMethodName = "/services.DataBaseService/UpdateTask"
-	DataBaseService_WorkTask_FullMethodName   = "/services.DataBaseService/WorkTask"
+	DataBaseService_GetUser_FullMethodName      = "/services.DataBaseService/GetUser"
+	DataBaseService_SaveUser_FullMethodName     = "/services.DataBaseService/SaveUser"
+	DataBaseService_GetTask_FullMethodName      = "/services.DataBaseService/GetTask"
+	DataBaseService_SaveTask_FullMethodName     = "/services.DataBaseService/SaveTask"
+	DataBaseService_GetAnswer_FullMethodName    = "/services.DataBaseService/GetAnswer"
+	DataBaseService_SaveAnswer_FullMethodName   = "/services.DataBaseService/SaveAnswer"
+	DataBaseService_UpdateTask_FullMethodName   = "/services.DataBaseService/UpdateTask"
+	DataBaseService_WorkTask_FullMethodName     = "/services.DataBaseService/WorkTask"
+	DataBaseService_GetUserTasks_FullMethodName = "/services.DataBaseService/GetUserTasks"
 )
 
 // DataBaseServiceClient is the client API for DataBaseService service.
@@ -41,6 +42,7 @@ type DataBaseServiceClient interface {
 	SaveAnswer(ctx context.Context, in *SaveAnswerRequest, opts ...grpc.CallOption) (*SaveAnswerResponse, error)
 	UpdateTask(ctx context.Context, in *UpdateTaskRequest, opts ...grpc.CallOption) (*UpdateTaskResponse, error)
 	WorkTask(ctx context.Context, in *WorkRequest, opts ...grpc.CallOption) (*WorkResponse, error)
+	GetUserTasks(ctx context.Context, in *UserTaskRequest, opts ...grpc.CallOption) (*UserTaskResponse, error)
 }
 
 type dataBaseServiceClient struct {
@@ -123,6 +125,15 @@ func (c *dataBaseServiceClient) WorkTask(ctx context.Context, in *WorkRequest, o
 	return out, nil
 }
 
+func (c *dataBaseServiceClient) GetUserTasks(ctx context.Context, in *UserTaskRequest, opts ...grpc.CallOption) (*UserTaskResponse, error) {
+	out := new(UserTaskResponse)
+	err := c.cc.Invoke(ctx, DataBaseService_GetUserTasks_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // DataBaseServiceServer is the server API for DataBaseService service.
 // All implementations must embed UnimplementedDataBaseServiceServer
 // for forward compatibility
@@ -135,6 +146,7 @@ type DataBaseServiceServer interface {
 	SaveAnswer(context.Context, *SaveAnswerRequest) (*SaveAnswerResponse, error)
 	UpdateTask(context.Context, *UpdateTaskRequest) (*UpdateTaskResponse, error)
 	WorkTask(context.Context, *WorkRequest) (*WorkResponse, error)
+	GetUserTasks(context.Context, *UserTaskRequest) (*UserTaskResponse, error)
 	mustEmbedUnimplementedDataBaseServiceServer()
 }
 
@@ -165,6 +177,9 @@ func (UnimplementedDataBaseServiceServer) UpdateTask(context.Context, *UpdateTas
 }
 func (UnimplementedDataBaseServiceServer) WorkTask(context.Context, *WorkRequest) (*WorkResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method WorkTask not implemented")
+}
+func (UnimplementedDataBaseServiceServer) GetUserTasks(context.Context, *UserTaskRequest) (*UserTaskResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetUserTasks not implemented")
 }
 func (UnimplementedDataBaseServiceServer) mustEmbedUnimplementedDataBaseServiceServer() {}
 
@@ -323,6 +338,24 @@ func _DataBaseService_WorkTask_Handler(srv interface{}, ctx context.Context, dec
 	return interceptor(ctx, in, info, handler)
 }
 
+func _DataBaseService_GetUserTasks_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UserTaskRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(DataBaseServiceServer).GetUserTasks(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: DataBaseService_GetUserTasks_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(DataBaseServiceServer).GetUserTasks(ctx, req.(*UserTaskRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // DataBaseService_ServiceDesc is the grpc.ServiceDesc for DataBaseService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -361,6 +394,10 @@ var DataBaseService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "WorkTask",
 			Handler:    _DataBaseService_WorkTask_Handler,
+		},
+		{
+			MethodName: "GetUserTasks",
+			Handler:    _DataBaseService_GetUserTasks_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

@@ -5,8 +5,6 @@ import (
 	serv "protobuf/gen/go"
 	"services/interal/service/data"
 
-	"strconv"
-
 	"google.golang.org/grpc"
 )
 
@@ -38,6 +36,7 @@ type DataBaseServiceServer interface {
 	SaveAnswer(context.Context, *serv.SaveAnswerRequest) (*serv.SaveAnswerResponse, error)
 	UpdateTask(context.Context, *serv.UpdateTaskRequest) (*serv.UpdateTaskResponse, error)
 	WorkTask(context.Context, *serv.WorkRequest) (*serv.WorkResponse, error)
+	GetUserTasks(context.Context, *serv.UserTaskRequest) (*serv.UserTaskResponse, error)
 	mustEmbedUnimplementedDataBaseServiceServer()
 }
 
@@ -79,11 +78,11 @@ func (s *ServerData) GetAnswer(ctx context.Context, req *serv.GetAnswerRequest) 
 	if err != nil {
 		return nil, err
 	}
-	return &serv.GetAnswerResponse{Id: int64(res.Id), Answer: strconv.Itoa(res.Answer)}, nil
+	return &serv.GetAnswerResponse{Id: int64(res.Id), Answer: res.Answer}, nil
 }
 
 func (s *ServerData) SaveAnswer(ctx context.Context, req *serv.SaveAnswerRequest) (*serv.SaveAnswerResponse, error) {
-	res, err := s.ansData.SaveUserAnswer(ctx, req.GetTaskId(), int(req.GetAnswer()))
+	res, err := s.ansData.SaveUserAnswer(ctx, req.GetTaskId(), req.GetAnswer())
 	if err != nil {
 		return nil, err
 	}
@@ -97,6 +96,28 @@ func (s *ServerData) UpdateTask(ctx context.Context, req *serv.UpdateTaskRequest
 	}
 	return &serv.UpdateTaskResponse{Id: res}, nil
 }
+
+func (s *ServerData) GetUserTasks(ctx context.Context, req *serv.UserTaskRequest) (*serv.UserTaskResponse, error) {
+	res, err := s.usrData.GetUserTasks(ctx, req.GetIdUser())
+	if err != nil {
+		return nil, err
+	}
+
+	resp := &serv.UserTaskResponse{
+		Taskmas: make([]*serv.Task, 0, len(res)),
+	}
+
+	for _, ts := range res {
+		resp.Taskmas = append(resp.Taskmas, &serv.Task{
+			Id: int64(ts.Id),
+			Task: ts.Task,
+			Stat: ts.Status,
+		})
+	}
+
+	return resp, nil
+}
+	
 
 func (s *ServerData) WorkTask(ctx context.Context, req *serv.WorkRequest) (*serv.WorkResponse, error) {
 	res, err := s.taskData.WorkTask(ctx)
