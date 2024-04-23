@@ -28,7 +28,7 @@ docker run -p 8080:8080 arifmetic:v2
 
 ### Тестирование сервера и его работы:
 
-Открой в браузере http://localhost:8080/arithmetic/auth
+Открой в браузере http://localhost:8080/arifmetic/auth
 
 Откроется окно Авторизации. Есть две кнопки:
 
@@ -36,7 +36,7 @@ docker run -p 8080:8080 arifmetic:v2
 
 2. Login проверяет пользователя в базе данных. И выдает токен доступа и перенаправляет на главную страницу. 
 
-Главная страница находтся по адресу http://localhost:8080/arithmetic/home
+Главная страница находтся по адресу http://localhost:8080/arifmetic/home
 
 Есть окно ввода выражений и их отправки на сервер.
 
@@ -45,10 +45,10 @@ docker run -p 8080:8080 arifmetic:v2
 Так же можно потестировать с помощью Postman.
 
 Отправка данных для регистрации и входа по адресу: 
-http://localhost:8080/arithmetic/auth/v1
+http://localhost:8080/arifmetic/auth/v1
 
 Отправка вырражений и получения ответа по адресу: 
-http://localhost:8080/arithmetic
+http://localhost:8080/arifmetic
 
 
 #### Техническая реализация
