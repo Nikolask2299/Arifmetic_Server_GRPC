@@ -73,5 +73,5 @@ func main() {
 	http.HandleFunc("/arifmetic", httpArifm.ArifmeticServer)
 	http.HandleFunc("/arifmetic/home", html.HandleHome)
 
-	http.ListenAndServe("localhost:" + cfg.HttpPort, nil)
+	http.ListenAndServe(":" + cfg.HttpPort, nil)
 }

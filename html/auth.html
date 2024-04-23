@@ -38,7 +38,7 @@
                 if (xhr.readyState == 4 && xhr.status == 200) {
                     var tocken = xhr.getResponseHeader("tocken");
                     sessionStorage.setItem("tocken", tocken);
-                    console.log(tocken);
+                    
                     if (tocken){
                     window.location.href = xhr.responseText; 
                     }
